@@ -4,6 +4,9 @@ const router = express.Router();
 const {db, genid} = require("../db/DbUtils");
 
 
+const BASE_URL = "http://localhost:8080";
+
+
 router.post('/rich_editor_upload', async(req, res)=>{
     if (!req.files) {
         res.send({
@@ -17,7 +20,8 @@ router.post('/rich_editor_upload', async(req, res)=>{
     let ret_files = [];
     for (let file of files) {
         let file_ext = file.originalname.substring(file.originalname.lastIndexOf(".") + 1);
-        let file_name = genid.NextId() + "." + file_ext;
+        let id = genid.NextId();
+        let file_name = id + "." + file_ext;
         // console.log(file_name);
 
         fs.renameSync(
@@ -25,8 +29,8 @@ router.post('/rich_editor_upload', async(req, res)=>{
             process.cwd() + "/public/upload/" + file_name
         )
         ret_files.push("/upload/" + file_name);
+       
     }
-    console.log(ret_files);
     res.send({
         "errno": 0,
         "data": {

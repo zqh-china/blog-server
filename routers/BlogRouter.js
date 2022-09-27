@@ -1,4 +1,8 @@
 const express = require("express");
+// 导入fs 和 path
+const fs = require("fs");
+const path = require("path");
+
 const router = express.Router();
 const {db, genid} = require("../db/DbUtils");
 
@@ -150,6 +154,33 @@ router.get("/detail", async (req, res) => {
         })
     }
 
+})
+
+// 删除图片
+router.delete("/_token/deleteImages", (req, res) => {
+    let images = req.body.images;
+    
+    // 提取出images中的图片
+    for (var i = 0; i < images.length; i++){
+        let image = images[i];
+        let image_name = image.src.split("/").pop();
+        // 删除图片
+        try {
+            fs.unlinkSync(process.cwd() + "/public/upload/" + image_name);
+            res.send({
+                code: 200,
+                msg: "删除成功"
+            })
+            
+        } catch (error) {
+            res.send({
+                code: 500,
+                msg: "删除失败"
+            })
+            console.log(error);
+        }
+    }
+    
 })
 
 module.exports = router;
